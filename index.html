@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width">
   <title>Petition Pinger</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.4.4/d3.min.js"></script>
-  <script src="uk.electionmap.d3.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.0.1/Rx.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js"></script>
@@ -46,8 +45,23 @@
     .new-entry {
       background-color: green;
     }
-    .moving-up:before {
-      content: '\2191 ';
+    .moving-up:after {
+      content: ' \2191 ';
+      color:green;
+    }
+    .moving-down:after {
+      content: ' \2193 ';
+      color:red;
+    }
+    .steady:after {
+      content: ' \2194 ';
+    }
+    .highlight {
+      transition: none !important;
+      fill:green !important;
+    }
+    .constituency-name {
+      cursor: pointer;
     }
   </style> 
 </head>
@@ -65,14 +79,7 @@ You can see the code I used <a href="https://github.com/pauldambra/petition-ping
   <div id="votes">
   </div>
 </div>
-  
-  <script>
-    var svg = d3.select('#outlet svg')
-                .attr('height', 430)
-                .attr('width', 330);
-    window.map = UK.ElectionMap();
-    window.map(svg);
-  </script>
+
 
 <script id="leaderboard-template" type="text/x-handlebars-template"> 
   <table>
@@ -83,15 +90,34 @@ You can see the code I used <a href="https://github.com/pauldambra/petition-ping
       <tbody> 
           {{#leaders}} 
           <tr {{newEntry}}> 
-              <td>{{name}}</td> 
-              <td><span {{movingUp}}>{{signature_count}}</span></td> 
+              <td class="constituency-name" 
+                  data>
+                  {{name}}
+              </td> 
+              <td>
+                <span {{movement}}
+                    data-position="{{position}}" 
+                    data-last-position="{{lastPosition}}">
+                  {{signature_count}}
+                </span>
+              </td> 
           </tr> 
           {{/leaders}} 
       </tbody> 
   </table> 
 </script>
 
+  <script src="uk.electionmap.d3.js"></script>
+  <script src="hoverer.js"></script>
   <script src="pinger.js"></script>
 
+  <script>
+    var svg = d3.select('#outlet svg')
+                .attr('height', 430)
+                .attr('width', 330);
+    window.map = UK.ElectionMap();
+    window.map = window.map.constituencyIdentifier(window.constituencies.makeNameSafe);
+    window.map(svg);
+  </script>
 </body>
 </html>

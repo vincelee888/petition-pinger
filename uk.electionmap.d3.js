@@ -44,13 +44,19 @@ UK.ElectionMap = function () {
       .append('path')
         .attr('class', 'constituency')
         .attr('data-constituency', function(d) {
-          return d[2];
+          return identifierFn(d[2]);
         })
         .attr('stroke', stroke)
         .attr('fill', fill)
         .attr('d', path);
 
     return tiles;
+  }
+
+  var identifierFn;
+  chart.constituencyIdentifier = function(fn) {
+    identifierFn = fn;
+    return chart;
   }
 
   chart.edgeLength = function (_) {
