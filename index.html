@@ -20,7 +20,7 @@
       height:600px;
     }
     #outlet {
-      min-width: 330px;
+      min-width: 400px;
       height: 600px;
       width: 32%;
     }
@@ -113,9 +113,10 @@ You can see the code I used <a href="https://github.com/pauldambra/petition-ping
 
   <script>
     var svg = d3.select('#outlet svg')
-                .attr('height', 430)
-                .attr('width', 330);
+                .attr('height', 500)
+                .attr('width', 400);
     window.map = UK.ElectionMap();
+    window.map = window.map.edgeLength(6);
     window.map = window.map.constituencyIdentifier(window.constituencies.makeNameSafe);
     window.map(svg);
   </script>
