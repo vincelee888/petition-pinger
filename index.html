@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Petition Pinger</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.4.4/d3.min.js"></script>
+  <script src="uk.electionmap.d3.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.0.1/Rx.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+
+  <style>
+    path.constituency {
+      transition: fill 2s ease;
+    }
+  </style> 
+</head>
+<body id="outlet">
+  
+  
+  <script>
+    var svg = d3.select('#outlet').append('svg').attr('width', 330).attr('height', 430);
+    window.map = UK.ElectionMap();
+    window.map(svg);
+  </script>
+
+  <script src="pinger.js"></script>
+
+</body>
+</html>
