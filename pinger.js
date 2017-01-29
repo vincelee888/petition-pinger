@@ -13,29 +13,29 @@ var getData = function() {
 
 
 
-var last = null;
+var lastConstituencies = null;
 var findChanges = function(data) {
   var output = [];
 
-  if (last) {
+  if (lastConstituencies) {
     data.forEach(function(d) {
       var newConstituency = {
         name: d.name,
         signature_count: d.signature_count
       };
-      var lastFor = _.find(last, {name: d.name});
-      if (!lastFor) {
+      var lastConstituenciesFor = _.find(lastConstituencies, {name: d.name});
+      if (!lastConstituenciesFor) {
         output.push(newConstituency);
       } else {
-        if (lastFor.signature_count !== newConstituency.signature_count) {
-          newConstituency.old_signature_count = lastFor.signature_count;
+        if (lastConstituenciesFor.signature_count !== newConstituency.signature_count) {
+          newConstituency.old_signature_count = lastConstituenciesFor.signature_count;
           output.push(newConstituency);
         }
       }
     })
   }
 
-  last = data;
+  lastConstituencies = data;
   return output;
 };
 
@@ -54,14 +54,38 @@ var source = document.getElementById('leaderboard-template').innerHTML;
 var template = Handlebars.compile(source); 
 var votes = document.getElementById('votes');
 
+Handlebars.registerHelper("newEntryClass", function() {
+    return this.newEntry ? 'new-entry' : '';
+});
+
+Handlebars.registerHelper("movingUpClass", function() {
+    return this.movingUp ? 'moving-up' : '';
+});
+
+var lastLeaders = null;
 var updateLeaderboard = function() {
-  var leaders = _.chain(last)
+  var leaders = _.chain(lastConstituencies)
                 .orderBy('signature_count', 'desc')
                 .map(function(x) {
                   return {name: x.name, signature_count: x.signature_count};
                 })
+                .map(function(x) {
+                  if (!lastLeaders) return x;
+
+                  var lastTime = _.find(lastLeaders, {name: x.name});
+                  if (!lastTime) {
+                    x.newEntry = true;
+                  } else {
+                    if (lastTime.signature_count < x.signature_count) {
+                      x.movingUp = true;
+                    }  
+                  }
+                  
+                  return x;
+                })
                 .take(20)
                 .value();
+  lastLeaders = leaders;
   votes.innerHTML = template({leaders: leaders});
 }
 

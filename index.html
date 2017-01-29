@@ -12,9 +12,9 @@
 
   <style>
     path.constituency {
-      transition: fill 2s ease;
+      transition: fill 3s ease;
     }
-    body {
+    #main {
       display: -ms-flex;
       display: -webkit-flex;
       display: flex;
@@ -43,14 +43,29 @@
       padding: 5px;
       text-align: left;
     }
+    .new-entry {
+      background-color: green;
+    }
+    .moving-up:before {
+      content: '\2191 ';
+    }
   </style> 
 </head>
 <body>
+<h1>Donald Trump Petion Pinger</h1>
+<p>
+I was amazed at how quickly <a href="https://petition.parliament.uk/petitions/171928" target="_blank">this petition</a> was being signed and noticed that the data is <a href="https://petition.parliament.uk/petitions/171928.json" target="_blank">published as JSON</a> so decided to see where the votes were coming from.
+
+You can see the code I used <a href="https://github.com/pauldambra/petition-pinger" target="_blank">on Github</a>. It could be amended for any petition.
+<p>
+<div id="main">
   <div id="outlet">
     <svg></svg>
   </div>
   <div id="votes">
   </div>
+</div>
+  
   <script>
     var svg = d3.select('#outlet svg')
                 .attr('height', 430)
@@ -66,9 +81,9 @@
     </thead> 
     <tbody> 
         {{#leaders}} 
-        <tr> 
+        <tr class="{{newEntryClass}}"> 
             <td>{{name}}</td> 
-            <td>{{signature_count}}</td> 
+            <td><span class="{{movingUpClass}}">{{signature_count}}</span></td> 
         </tr> 
         {{/leaders}} 
     </tbody> 
