@@ -5,7 +5,7 @@ var overs$ = null;
 
 window.constituencies = window.constituencies || {};
 window.constituencies.makeNameSafe = function(name) {
-  return encodeURIComponent(name.toLowerCase());
+  return name.toLowerCase().replace(',', '');
 };
 
 var findConstituency = function(name) {
