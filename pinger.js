@@ -54,12 +54,14 @@ var source = document.getElementById('leaderboard-template').innerHTML;
 var template = Handlebars.compile(source); 
 var votes = document.getElementById('votes');
 
-Handlebars.registerHelper("newEntryClass", function() {
-    return this.newEntry ? 'new-entry' : '';
+Handlebars.registerHelper("newEntry", function() {
+    var clazz = this.newEntry ? 'new-entry' : '';
+    return clazz;
 });
 
-Handlebars.registerHelper("movingUpClass", function() {
-    return this.movingUp ? 'moving-up' : '';
+Handlebars.registerHelper("movingUp", function() {
+    var clazz = this.movingUp ? 'moving-up' : '';
+    return clazz;
 });
 
 var lastLeaders = null;
