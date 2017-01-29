@@ -53,6 +53,7 @@ Handlebars.registerHelper("newEntry", function() {
 
 Handlebars.registerHelper("movement", function() {
   var change = this.position - this.lastPosition;
+
   var r = '';
   
   if (change > 0) {
@@ -75,7 +76,11 @@ var updateLeaderboard = function() {
   var leaders = _.chain(lastConstituencies)
                 .orderBy('signature_count', 'desc')
                 .map(function(x, index) {
-                  return {name: x.name, signature_count: x.signature_count, position: index};
+                  return {
+                    name: x.name, 
+                    signature_count: x.signature_count, 
+                    position: index
+                  };
                 })
                 .map(function(x) {
                   if (!lastLeaders) return x;
