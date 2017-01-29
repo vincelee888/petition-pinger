@@ -8,21 +8,72 @@
   <script src="uk.electionmap.d3.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.0.1/Rx.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js"></script>
 
   <style>
     path.constituency {
       transition: fill 2s ease;
     }
+    body {
+      display: -ms-flex;
+      display: -webkit-flex;
+      display: flex;
+      height:600px;
+    }
+    #outlet {
+      min-width: 330px;
+      height: 600px;
+      width: 32%;
+    }
+    #outlet svg {
+      margin:auto;
+      display:block;
+    }
+    #votes {
+      min-width:200px;
+      width:67%;
+      height:600px;
+    }
+    table {
+      width:100%;
+      border-collapse: collapse;
+    }
+    td, th {
+      border: 1px solid #999;
+      padding: 5px;
+      text-align: left;
+    }
   </style> 
 </head>
-<body id="outlet">
-  
-  
+<body>
+  <div id="outlet">
+    <svg></svg>
+  </div>
+  <div id="votes">
+  </div>
   <script>
-    var svg = d3.select('#outlet').append('svg').attr('width', 330).attr('height', 430);
+    var svg = d3.select('#outlet svg')
+                .attr('height', 430)
+                .attr('width', 330);
     window.map = UK.ElectionMap();
     window.map(svg);
   </script>
+
+<script id="leaderboard-template" type="text/x-handlebars-template"> <table>
+    <thead> 
+        <th>Constituency</th> 
+        <th>Votes</th> 
+    </thead> 
+    <tbody> 
+        {{#leaders}} 
+        <tr> 
+            <td>{{name}}</td> 
+            <td>{{signature_count}}</td> 
+        </tr> 
+        {{/leaders}} 
+    </tbody> 
+</table> 
+</script>
 
   <script src="pinger.js"></script>
 

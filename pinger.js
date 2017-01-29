@@ -28,6 +28,7 @@ var findChanges = function(data) {
         output.push(newConstituency);
       } else {
         if (lastFor.signature_count !== newConstituency.signature_count) {
+          newConstituency.old_signature_count = lastFor.signature_count;
           output.push(newConstituency);
         }
       }
@@ -38,7 +39,7 @@ var findChanges = function(data) {
   return output;
 };
 
-var flashChangedConstituencies = function(constituency) {
+var updateConstituency = function(constituency) {
   var name = constituency.name;
   var el = document.querySelector('[data-constituency="'+ name + '"]')
   if (el) {
@@ -49,12 +50,29 @@ var flashChangedConstituencies = function(constituency) {
   }
 };
 
-Rx.Observable
+var source = document.getElementById('leaderboard-template').innerHTML; 
+var template = Handlebars.compile(source); 
+var votes = document.getElementById('votes');
+
+var updateLeaderboard = function() {
+  var leaders = _.chain(last)
+                .orderBy('signature_count', 'desc')
+                .map(function(x) {
+                  return {name: x.name, signature_count: x.signature_count};
+                })
+                .take(20)
+                .value();
+  votes.innerHTML = template({leaders: leaders});
+}
+
+var changes$ = Rx.Observable
   .timer(500, 5000)
   .flatMap(getData)
   .map(function(d) { return d.response; })
   .map(function(d) {
     return d.data.attributes.signatures_by_constituency || [];
   })
-  .flatMap(findChanges)
-  .subscribe(flashChangedConstituencies);
+  .flatMap(findChanges);
+  
+changes$.subscribe(updateConstituency);
+changes$.subscribe(updateLeaderboard);
