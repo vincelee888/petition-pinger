@@ -50,19 +50,17 @@ var updateConstituency = function(constituency) {
   }
 };
 
-var source = document.getElementById('leaderboard-template').innerHTML; 
-var template = Handlebars.compile(source); 
-var votes = document.getElementById('votes');
-
 Handlebars.registerHelper("newEntry", function() {
-    var clazz = this.newEntry ? 'new-entry' : '';
-    return clazz;
+    return this.newEntry ? 'class="new-entry"' : '';
 });
 
 Handlebars.registerHelper("movingUp", function() {
-    var clazz = this.movingUp ? 'moving-up' : '';
-    return clazz;
+    return this.movingUp ? 'class="moving-up"' : '';
 });
+
+var source = document.getElementById('leaderboard-template').innerHTML; 
+var template = Handlebars.compile(source); 
+var votes = document.getElementById('votes');
 
 var lastLeaders = null;
 var updateLeaderboard = function() {
