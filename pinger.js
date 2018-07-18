@@ -5,7 +5,7 @@ var map = window.map;
 
 var getData = function() {
   return Rx.Observable.ajax({
-    url: 'https://cors.io/?u=https://petition.parliament.uk/petitions/223729.json',
+    url: 'http://petition.parliament.uk/petitions/223729.json',
     crossDomain: true
   });
 }
