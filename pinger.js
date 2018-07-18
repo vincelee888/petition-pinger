@@ -14,7 +14,7 @@ var getData = function() {
   return Rx.Observable.ajax({
     url,
     crossDomain: true
-  });
+  }).catch(function () { return Rx.Observable.of({data: {}})});
 }
 
 var lastConstituencies = null;
@@ -79,14 +79,17 @@ var nowTrackingTemplate = Handlebars.compile(nowTrackingSource);
 var nowTrackingOutlet = document.getElementById('now-tracking-outlet');
 function updateNowTracking(response) {
 
-  var p = {
-    name: response.data.attributes.action,
-    signatureCount: response.data.attributes.signature_count,
-    state: response.data.attributes.state,
-    url: response.links.self.trim('.json')
+  if (response && response.data && response.data.attributes) {
+    var p = {
+      name: response.data.attributes.action,
+      signatureCount: response.data.attributes.signature_count,
+      state: response.data.attributes.state,
+      url: response.links.self.trim('.json')
+    }
+    nowTrackingOutlet.innerHTML = nowTrackingTemplate(p)
+  } else {
+    nowTrackingOutlet.innerHTML=''
   }
-
-  nowTrackingOutlet.innerHTML = nowTrackingTemplate(p)
 }
 
 var leaderboardSource = document.getElementById('leaderboard-template').innerHTML;
@@ -135,12 +138,26 @@ var responses$ = Rx.Observable
   .map(function(d) { return d.response; })
 
 var changes$ = responses$
-  .map(function(d) {
-    return d.data.attributes.signatures_by_constituency || [];
-  })
+  .map(function(d) { return (d && d.data) || {}; })
+  .map(function(d) { return d.attributes || {}; })
+  .map(function(d) { return d.signatures_by_constituency || []; })
   .flatMap(findChanges)
   .catch(showItIsBroken);
 
 changes$.subscribe(updateConstituency, showItIsBroken);
 changes$.subscribe(updateLeaderboard, showItIsBroken);
 responses$.subscribe(updateNowTracking, showItIsBroken);
+
+Rx.Observable.ajax({
+    url: 'https://petition.parliament.uk/petitions.json?state=open',
+    crossDomain: true
+  })
+  .flatMap(function (r) { return r.response.data })
+  .take(50)
+  .subscribe(function (d) {
+    var list = document.getElementById('popular-petitions')
+    var optionNode =  document.createElement("option");
+    optionNode.value = d.links.self;
+    optionNode.appendChild(document.createTextNode(`${d.attributes.action} : ${d.attributes.signature_count} signatures`));
+    list.appendChild(optionNode);
+  });
