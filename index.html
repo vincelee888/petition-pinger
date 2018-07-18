@@ -68,6 +68,9 @@
       font-size: xx-large;
       font-weight: bold;
     }
+    #petition {
+      width: 350px;
+    }
   </style>
 </head>
 <body>
@@ -77,7 +80,14 @@ I was amazed at how quickly <a href="https://petition.parliament.uk/petitions/17
 
 You can see the code I used <a href="https://github.com/pauldambra/petition-pinger" target="_blank">on Github</a>. It could be amended for any petition.
 <p>
-  <p>Now tracking <a href="https://petition.parliament.uk/petitions/223729">Rescind Art.50 if Vote Leave has broken Electoral Laws regarding 2016 referendum</a></p>
+  <p>
+    <div id="now-tracking-outlet"></div>
+
+    <div>
+      <label for="petition">Petition URL:</label>
+      <input id="petition" value="https://petition.parliament.uk/petitions/223729.json"/>
+    </div>
+  </p>
   <div id="flash"></div>
 <div id="main">
 
@@ -88,6 +98,11 @@ You can see the code I used <a href="https://github.com/pauldambra/petition-ping
   </div>
 </div>
 
+<script id="now-tracking-template" type="text/x-handlebars-template">
+  <p>
+    Now tracking <a href="{{url}}">{{name}}</a> with {{signatureCount}} signatures
+  <p>
+</script>
 
 <script id="leaderboard-template" type="text/x-handlebars-template">
   <h1>

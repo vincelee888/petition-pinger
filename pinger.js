@@ -3,6 +3,8 @@ var Rx = window.Rx;
 var _ = window._;
 var map = window.map;
 
+var url;
+
 var showItIsBroken = function(err) {
   console.log(err)
   document.getElementById('flash').innerHTML = "Oh dang, this is broken. Try refreshing"
@@ -10,7 +12,7 @@ var showItIsBroken = function(err) {
 
 var getData = function() {
   return Rx.Observable.ajax({
-    url: 'https://petition.parliament.uk/petitions/223729.json',
+    url,
     crossDomain: true
   });
 }
@@ -72,8 +74,23 @@ Handlebars.registerHelper("movement", function() {
   return new Handlebars.SafeString(r);
 });
 
-var source = document.getElementById('leaderboard-template').innerHTML;
-var template = Handlebars.compile(source);
+var nowTrackingSource = document.getElementById('now-tracking-template').innerHTML;
+var nowTrackingTemplate = Handlebars.compile(nowTrackingSource);
+var nowTrackingOutlet = document.getElementById('now-tracking-outlet');
+function updateNowTracking(response) {
+
+  var p = {
+    name: response.data.attributes.action,
+    signatureCount: response.data.attributes.signature_count,
+    state: response.data.attributes.state,
+    url: response.links.self.trim('.json')
+  }
+
+  nowTrackingOutlet.innerHTML = nowTrackingTemplate(p)
+}
+
+var leaderboardSource = document.getElementById('leaderboard-template').innerHTML;
+var leaderboardTemplate = Handlebars.compile(leaderboardSource);
 var votes = document.getElementById('votes');
 
 var lastLeaders = null;
@@ -99,15 +116,25 @@ var updateLeaderboard = function() {
                 .value();
 
   lastLeaders = leaders;
-  votes.innerHTML = template({leaders: leaders});
+  votes.innerHTML = leaderboardTemplate({leaders: leaders});
 
   window.hoverActions.init();
 }
 
-var changes$ = Rx.Observable
-  .timer(500, 5000)
+var petitionInput = document.getElementById('petition')
+Rx.Observable.fromEvent(petitionInput, 'keyup')
+  .startWith(petitionInput.value)
+  .debounceTime(500)
+  .subscribe(function(t) {
+    url = petitionInput.value
+  })
+
+var responses$ = Rx.Observable
+  .timer(500, 500)
   .flatMap(getData)
   .map(function(d) { return d.response; })
+
+var changes$ = responses$
   .map(function(d) {
     return d.data.attributes.signatures_by_constituency || [];
   })
@@ -116,3 +143,4 @@ var changes$ = Rx.Observable
 
 changes$.subscribe(updateConstituency, showItIsBroken);
 changes$.subscribe(updateLeaderboard, showItIsBroken);
+responses$.subscribe(updateNowTracking, showItIsBroken);
