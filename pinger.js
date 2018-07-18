@@ -4,9 +4,9 @@ var _ = window._;
 var map = window.map;
 
 var getData = function() {
-  return Rx.Observable.ajax({ 
-    url: 'http://cors.io/?u=https://petition.parliament.uk/petitions/223729.json', 
-    crossDomain: true 
+  return Rx.Observable.ajax({
+    url: 'https://cors.io/?u=https://petition.parliament.uk/petitions/223729.json',
+    crossDomain: true
   });
 }
 
@@ -55,20 +55,20 @@ Handlebars.registerHelper("movement", function() {
   var change = this.position - this.lastPosition;
 
   var r = '';
-  
+
   if (change > 0) {
     r = 'class="moving-up"';
   }
-  
+
   if (change < 0) {
-   r = 'class="moving-down"'; 
+   r = 'class="moving-down"';
   }
-  
+
   return new Handlebars.SafeString(r);
 });
 
-var source = document.getElementById('leaderboard-template').innerHTML; 
-var template = Handlebars.compile(source); 
+var source = document.getElementById('leaderboard-template').innerHTML;
+var template = Handlebars.compile(source);
 var votes = document.getElementById('votes');
 
 var lastLeaders = null;
@@ -77,8 +77,8 @@ var updateLeaderboard = function() {
                 .orderBy('signature_count', 'desc')
                 .map(function(x, index) {
                   return {
-                    name: x.name, 
-                    signature_count: x.signature_count, 
+                    name: x.name,
+                    signature_count: x.signature_count,
                     position: index
                   };
                 })
@@ -87,12 +87,12 @@ var updateLeaderboard = function() {
 
                   var lastTime = _.findIndex(lastLeaders, {name: x.name});
                   x.lastPosition = lastTime;
-                  
+
                   return x;
                 })
                 .take(20)
                 .value();
-  
+
   lastLeaders = leaders;
   votes.innerHTML = template({leaders: leaders});
 
@@ -107,6 +107,6 @@ var changes$ = Rx.Observable
     return d.data.attributes.signatures_by_constituency || [];
   })
   .flatMap(findChanges);
-  
+
 changes$.subscribe(updateConstituency);
 changes$.subscribe(updateLeaderboard);
