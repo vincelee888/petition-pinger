@@ -63,7 +63,7 @@
     .constituency-name {
       cursor: pointer;
     }
-  </style> 
+  </style>
 </head>
 <body>
 <h1>Petition Pinger</h1>
@@ -82,30 +82,33 @@ You can see the code I used <a href="https://github.com/pauldambra/petition-ping
 </div>
 
 
-<script id="leaderboard-template" type="text/x-handlebars-template"> 
+<script id="leaderboard-template" type="text/x-handlebars-template">
+  <h1>
+    Top 20 Consituencies by Votes
+  </h1>
   <table>
-      <thead> 
-          <th>Constituency</th> 
-          <th>Votes</th> 
-      </thead> 
-      <tbody> 
-          {{#leaders}} 
-          <tr {{newEntry}}> 
-              <td class="constituency-name" 
+      <thead>
+          <th>Constituency</th>
+          <th>Votes</th>
+      </thead>
+      <tbody>
+          {{#leaders}}
+          <tr {{newEntry}}>
+              <td class="constituency-name"
                   data>
                   {{name}}
-              </td> 
+              </td>
               <td>
                 <span {{movement}}
-                    data-position="{{position}}" 
+                    data-position="{{position}}"
                     data-last-position="{{lastPosition}}">
                   {{signature_count}}
                 </span>
-              </td> 
-          </tr> 
-          {{/leaders}} 
-      </tbody> 
-  </table> 
+              </td>
+          </tr>
+          {{/leaders}}
+      </tbody>
+  </table>
 </script>
 
   <script src="uk.electionmap.d3.js"></script>
