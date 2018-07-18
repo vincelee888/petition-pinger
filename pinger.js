@@ -3,6 +3,11 @@ var Rx = window.Rx;
 var _ = window._;
 var map = window.map;
 
+var showItIsBroken = function(err) {
+  console.log(err)
+  document.getElementById('flash').innerHTML = "Oh dang, this is broken. Try refreshing"
+}
+
 var getData = function() {
   return Rx.Observable.ajax({
     url: 'https://petition.parliament.uk/petitions/223729.json',
@@ -106,7 +111,8 @@ var changes$ = Rx.Observable
   .map(function(d) {
     return d.data.attributes.signatures_by_constituency || [];
   })
-  .flatMap(findChanges);
+  .flatMap(findChanges)
+  .catch(showItIsBroken);
 
-changes$.subscribe(updateConstituency);
-changes$.subscribe(updateLeaderboard);
+changes$.subscribe(updateConstituency, showItIsBroken);
+changes$.subscribe(updateLeaderboard, showItIsBroken);
