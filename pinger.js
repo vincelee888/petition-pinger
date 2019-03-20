@@ -110,7 +110,7 @@ var updateLeaderboard = function() {
                 .map(function(x) {
                   if (!lastLeaders) return x;
 
-                  var lastTime = _.findIndex(lastLeaders, {name: x.name});
+                  var lastTime = _.findIndex(lastLeaders, { name: x.name });
                   x.lastPosition = lastTime;
 
                   return x;
@@ -133,7 +133,7 @@ Rx.Observable.fromEvent(petitionInput, 'keyup')
   })
 
 var responses$ = Rx.Observable
-  .timer(500, 500)
+  .timer(250, 1500)
   .flatMap(getData)
   .map(function(d) { return d.response; })
 

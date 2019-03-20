@@ -5,7 +5,7 @@ var overs$ = null;
 
 window.constituencies = window.constituencies || {};
 window.constituencies.makeNameSafe = function(name) {
-  return name.toLowerCase().replace(',', '');
+  return name.toLowerCase().replace(/[,\s+\n]/g, '');
 };
 
 var findConstituency = function(name) {
@@ -20,20 +20,29 @@ window.hoverActions = window.hoverActions || {
 
     var sources = document.querySelectorAll('#votes .constituency-name');
 
-    var overs$ = Rx.Observable.fromEvent(sources, 'mousemove');
+    var overs$ = Rx.Observable
+      .fromEvent(sources, 'mousemove')
+      .debounceTime(150);
+
     overs$.subscribe(function(e) {
       var constituency = findConstituency(e.srcElement.innerText);
-      if (constituency) { 
-        constituency.classList.add('highlight'); 
+      if (constituency) {
+        constituency.classList.add('highlight');
       }
+    });
+    overs$.subscribe(function(e) {
+      e.srcElement.parentElement.classList.add('highlight');
     });
 
     var outs$ = Rx.Observable.fromEvent(sources, 'mouseout');
     outs$.subscribe(function(e) {
       var constituency = findConstituency(e.srcElement.innerText);
-      if (constituency) { 
-        constituency.classList.remove('highlight'); 
+      if (constituency) {
+        constituency.classList.remove('highlight');
       }
+    });
+    outs$.subscribe(function(e) {
+      e.srcElement.parentElement.classList.remove('highlight');
     });
   }
 };
