@@ -61,14 +61,15 @@ Handlebars.registerHelper("newEntry", function() {
 Handlebars.registerHelper("movement", function() {
   var change = this.position - this.lastPosition;
 
-  var r = '';
-
+  var r = 'class="steady"';
   if (change > 0) {
+    console.log(this, 'moving up')
     r = 'class="moving-up"';
   }
 
   if (change < 0) {
-   r = 'class="moving-down"';
+    console.log(this, 'moving down')
+    r = 'class="moving-down"';
   }
 
   return new Handlebars.SafeString(r);
@@ -133,7 +134,7 @@ Rx.Observable.fromEvent(petitionInput, 'keyup')
   })
 
 var responses$ = Rx.Observable
-  .timer(250, 1500)
+  .timer(500, 1500)
   .flatMap(getData)
   .map(function(d) { return d.response; })
 
