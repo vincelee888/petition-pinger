@@ -138,18 +138,17 @@ Back in 2017 I was amazed at how quickly <a href="https://petition.parliament.uk
   </table>
 </script>
 
-  <script src="uk.electionmap.d3.js"></script>
-  <script src="hoverer.js"></script>
-  <script src="pinger.js"></script>
+  <script src="constituencies.js" charset="utf-8"></script>
+  <script src="uk.electionmap.d3.js" charset="utf-8"></script>
+  <script src="hoverer.js" charset="utf-8"></script>
+  <script src="map.js" charset="utf-8"></script>
 
-  <script>
-    var svg = d3.select('#outlet svg')
-                .attr('height', 500)
-                .attr('width', 400);
-    window.map = UK.ElectionMap();
-    window.map = window.map.edgeLength(6);
-    window.map = window.map.constituencyIdentifier(window.constituencies.makeNameSafe);
-    window.map(svg);
-  </script>
+  <script src="pinger.js" charset="utf-8"></script>
+
+  <script src="petition-chooser.js" charset="utf-8"></script>
+  <script src="flash-on-sign.js" charset="utf-8"></script>
+  <script src="leaderboard.js" charset="utf-8"></script>
+  <script src="petition-site-fangler.js" charset="utf-8"></script>
+
 </body>
 </html>

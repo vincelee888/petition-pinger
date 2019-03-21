@@ -1,48 +1,24 @@
-
-var Rx = window.Rx;
-
-var overs$ = null;
-
-window.constituencies = window.constituencies || {};
-window.constituencies.makeNameSafe = function(name) {
-  return name.toLowerCase().replace(/[,\s+\n]/g, '');
-};
-
-var findConstituency = function(name) {
-  var constituencyName = constituencies.makeNameSafe(name);
-  return document.querySelector('[data-constituency="'+ constituencyName +'"]');
-};
+var Rx = window.Rx
 
 window.hoverActions = window.hoverActions || {
-  init: function() {
-    if (overs$)
-      overs$.dispose();
+  init: function () {
+    var sources = document.querySelectorAll('#votes .constituency-name')
 
-    var sources = document.querySelectorAll('#votes .constituency-name');
-
-    var overs$ = Rx.Observable
+    Rx.Observable
       .fromEvent(sources, 'mousemove')
-      .debounceTime(150);
+      .debounceTime(50)
+      .subscribe(function (e) {
+        var constituency = window.constituencies.find(e.srcElement.innerText)
+        constituency && constituency.classList.add('highlight')
+        e.srcElement.parentElement.classList.add('highlight')
+      })
 
-    overs$.subscribe(function(e) {
-      var constituency = findConstituency(e.srcElement.innerText);
-      if (constituency) {
-        constituency.classList.add('highlight');
-      }
-    });
-    overs$.subscribe(function(e) {
-      e.srcElement.parentElement.classList.add('highlight');
-    });
-
-    var outs$ = Rx.Observable.fromEvent(sources, 'mouseout');
-    outs$.subscribe(function(e) {
-      var constituency = findConstituency(e.srcElement.innerText);
-      if (constituency) {
-        constituency.classList.remove('highlight');
-      }
-    });
-    outs$.subscribe(function(e) {
-      e.srcElement.parentElement.classList.remove('highlight');
-    });
+    Rx.Observable
+      .fromEvent(sources, 'mouseout')
+      .subscribe(function (e) {
+        var constituency = window.constituencies.find(e.srcElement.innerText)
+        constituency && constituency.classList.remove('highlight')
+        e.srcElement.parentElement.classList.remove('highlight')
+      })
   }
-};
+}
