@@ -29,7 +29,6 @@ var flashClearers = {}
 
 var flashConstituency = function (constituencies) {
   constituencies.map(function (c) {
-    console.log(c, 'th c')
     var name = c.name
     var safeName = window.constituencies.makeNameSafe(name)
     var el = document.querySelector('[data-constituency="' + safeName + '"]')
