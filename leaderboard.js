@@ -28,6 +28,7 @@ var votes = document.getElementById('votes')
 var lastLeaders = null
 
 function update (data) {
+  console.log(data, 'ld')
   var leaders = _.chain(data)
     .orderBy('signature_count', 'desc')
     .map(function (x, index) {

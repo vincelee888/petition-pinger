@@ -11,7 +11,7 @@ function getData () {
     url: window.petitionPinger.url,
     crossDomain: true
   }).catch(function (err) {
-    console.log(err, 'ajax error')
+    showItIsBroken(err)
     return window.Rx.Observable.of({data: {}})
   })
 }
@@ -29,4 +29,5 @@ window.petitionPinger.signatures$ = window.petitionPinger.responses$
   .map(function (d) { return (d && d.data) || {} })
   .map(function (d) { return d.attributes || {} })
   .map(function (d) { return d.signatures_by_constituency || [] })
-  .catch(showItIsBroken)
+  .publish()
+  .refCount()
