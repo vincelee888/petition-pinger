@@ -1,0 +1,7 @@
+var svg = window.d3.select('#outlet svg')
+  .attr('height', 500)
+  .attr('width', 400)
+window.map = window.UK.ElectionMap()
+window.map = window.map.edgeLength(6)
+window.map = window.map.constituencyIdentifier(window.constituencies.makeNameSafe)
+window.map(svg)

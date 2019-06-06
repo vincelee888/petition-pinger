@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>Petition Pinger</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.4.4/d3.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.0.1/Rx.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.4.4/d3.min.js" integrity="sha256-V28Aoqm/QLxBnkLyoarf0+wZtgxDAu7mJ9KcBYvTBnI=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/5.0.1/Rx.min.js" integrity="sha256-TeWVfZ29ZE2tO8al/1wPR2TAOWZ1GRXbZ90H5p/dNMY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js" integrity="sha256-8E6QUcFg1KTnpEU8TFGhpTGHw5fJqB9vCms3OhAYLqw=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.6/handlebars.min.js" integrity="sha256-1O3BtOwnPyyRzOszK6P+gqaRoXHV6JXj8HkjZmPYhCI=" crossorigin="anonymous"></script>
 
   <style>
     path.constituency {
@@ -34,7 +34,7 @@
       height:600px;
     }
     table {
-      width:100%;
+      width:450;
       border-collapse: collapse;
     }
     td, th {
@@ -59,20 +59,43 @@
     .highlight {
       transition: none !important;
       fill:green !important;
+      background-color: rgba(0,128,0,0.3);
     }
     .constituency-name {
       cursor: pointer;
     }
-  </style> 
+    #flash {
+      color:red;
+      font-size: xx-large;
+      font-weight: bold;
+    }
+    #petition {
+      width: 350px;
+    }
+  </style>
 </head>
 <body>
-<h1>Donald Trump Petition Pinger</h1>
-<p>
-I was amazed at how quickly <a href="https://petition.parliament.uk/petitions/171928" target="_blank">this petition</a> was being signed and noticed that the data is <a href="https://petition.parliament.uk/petitions/171928.json" target="_blank">published as JSON</a> so decided to see where the votes were coming from.
 
-You can see the code I used <a href="https://github.com/pauldambra/petition-pinger" target="_blank">on Github</a>. It could be amended for any petition.
+<h1>Petition Pinger</h1>
 <p>
+Back in 2017 I was amazed at how quickly <a href="https://petition.parliament.uk/petitions/171928" target="_blank">this petition</a> was being signed and noticed that the data is <a href="https://petition.parliament.uk/petitions/171928.json" target="_blank">published as JSON</a> so decided to see where the votes were coming from. <a href="https://github.com/pauldambra/petition-pinger">(fork me on github)</a>
+<p>
+  <p>
+    <div id="now-tracking-outlet"></div>
+
+    <div>
+      <label for="petition">Petition URL:</label>
+      <input id="petition" value="https://petition.parliament.uk/petitions/242300.json" list="popular-petitions"/>
+      <datalist id="popular-petitions"></datalist>
+    </div>
+  </p>
+  <div id="flash"></div>
+<p>
+  Constituencies flash yellow when at least one new signature is received from them.
+</p><p>  Once the leaderboard loads you can hover over constituencies to see where they are.
+</p>
 <div id="main">
+
   <div id="outlet">
     <svg></svg>
   </div>
@@ -80,45 +103,52 @@ You can see the code I used <a href="https://github.com/pauldambra/petition-ping
   </div>
 </div>
 
+<script id="now-tracking-template" type="text/x-handlebars-template">
+  <p>
+    Now tracking <a href="{{url}}">{{name}}</a> with {{signatureCount}} signatures
+  <p>
+</script>
 
-<script id="leaderboard-template" type="text/x-handlebars-template"> 
+<script id="leaderboard-template" type="text/x-handlebars-template">
+  <h1>
+    Top 20 Consituencies by Votes
+  </h1>
   <table>
-      <thead> 
-          <th>Constituency</th> 
-          <th>Votes</th> 
-      </thead> 
-      <tbody> 
-          {{#leaders}} 
-          <tr {{newEntry}}> 
-              <td class="constituency-name" 
-                  data>
+      <thead>
+          <th>Constituency</th>
+          <th>Votes</th>
+      </thead>
+      <tbody>
+          {{#leaders}}
+          <tr {{newEntry}}>
+              <td class="constituency-name"
+                data>
                   {{name}}
-              </td> 
+              </td>
               <td>
                 <span {{movement}}
-                    data-position="{{position}}" 
+                    data-position="{{position}}"
                     data-last-position="{{lastPosition}}">
                   {{signature_count}}
                 </span>
-              </td> 
-          </tr> 
-          {{/leaders}} 
-      </tbody> 
-  </table> 
+              </td>
+          </tr>
+          {{/leaders}}
+      </tbody>
+  </table>
 </script>
 
-  <script src="uk.electionmap.d3.js"></script>
-  <script src="hoverer.js"></script>
-  <script src="pinger.js"></script>
+  <script src="constituencies.js" charset="utf-8"></script>
+  <script src="uk.electionmap.d3.js" charset="utf-8"></script>
+  <script src="hoverer.js" charset="utf-8"></script>
+  <script src="map.js" charset="utf-8"></script>
 
-  <script>
-    var svg = d3.select('#outlet svg')
-                .attr('height', 500)
-                .attr('width', 400);
-    window.map = UK.ElectionMap();
-    window.map = window.map.edgeLength(6);
-    window.map = window.map.constituencyIdentifier(window.constituencies.makeNameSafe);
-    window.map(svg);
-  </script>
+  <script src="pinger.js" charset="utf-8"></script>
+
+  <script src="petition-chooser.js" charset="utf-8"></script>
+  <script src="flash-on-sign.js" charset="utf-8"></script>
+  <script src="leaderboard.js" charset="utf-8"></script>
+  <script src="petition-site-fangler.js" charset="utf-8"></script>
+
 </body>
 </html>
